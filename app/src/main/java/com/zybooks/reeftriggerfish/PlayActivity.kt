@@ -14,7 +14,6 @@ class PlayActivity : AppCompatActivity() {
         setContentView(R.layout.activity_play)
 
         val action = supportActionBar
-        val bool = false
         action?.hide()
         playButton = findViewById(R.id.playBtn)
         playButton.setOnClickListener {

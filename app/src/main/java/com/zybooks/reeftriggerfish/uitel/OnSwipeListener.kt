@@ -1,16 +1,18 @@
 package com.zybooks.reeftriggerfish.uitel
 
 import android.content.Context
-import android.gesture.Gesture
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.abs
 
+private const val SWIPE_THRESHOLD = 100
+private const val SWIPE_VELOCITY_THRESHOLD = 100
+
 open class OnSwipeListener(context : Context?) : View.OnTouchListener
 {
-    var gestureDetector : GestureDetector
+    private var gestureDetector : GestureDetector
 
     // *************** MOTION DETECTION ***************
     override fun onTouch(p0: View?, motionEvent: MotionEvent?): Boolean {
@@ -18,10 +20,7 @@ open class OnSwipeListener(context : Context?) : View.OnTouchListener
     }
 
     // *************** MOTION TRACKING ***************
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-
-        val SWIPE_THRESHOLD = 100
-        val SWIPE_VELOCITY_THRESHOLD = 100
+    inner class GestureListener : SimpleOnGestureListener() {
 
         override fun onDown(e: MotionEvent?) : Boolean {
             return true
@@ -50,7 +49,7 @@ open class OnSwipeListener(context : Context?) : View.OnTouchListener
                 }
             }  else if ( abs(yDiff) > SWIPE_THRESHOLD && abs(velocityY) > SWIPE_VELOCITY_THRESHOLD){
                 //  *************** UP OR DOWN MOVEMENT ***************
-                if( (xDiff > 0) ){
+                if( (yDiff < 0) ){
                     onSwipeTop()
                 } else {
                     onSwipeBottom()
@@ -61,23 +60,11 @@ open class OnSwipeListener(context : Context?) : View.OnTouchListener
         }
     }
 
-
-    open fun onSwipeLeft() {
-
-    }
-
-    open fun onSwipeRight() {
-
-    }
-
-    open fun onSwipeBottom() {
-
-    }
-
-    open fun onSwipeTop() {
-
-    }
-
+    // These get overridden in MainActivity.onCreate()
+    open fun onSwipeLeft() {}
+    open fun onSwipeRight() {}
+    open fun onSwipeBottom() {}
+    open fun onSwipeTop() {}
 
     init {
         gestureDetector = GestureDetector(context, GestureListener())

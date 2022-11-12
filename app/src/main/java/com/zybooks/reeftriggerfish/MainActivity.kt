@@ -10,9 +10,19 @@ import android.widget.TextView
 import com.zybooks.reeftriggerfish.uitel.OnSwipeListener
 import java.util.Arrays.asList
 import kotlin.math.abs
+import kotlin.math.floor
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var cell : ArrayList<ImageView>
+    private lateinit var scoreResult : TextView
+    private lateinit var mouseHandler: Handler
+
+    private var cellWidth : Int = 0
+    private var screenWidth : Int = 0
+    private var screenHeight : Int = 0
+    private var score : Int = 0
+    private var emptyCell : Int = R.drawable.transparent
     private var cellImages = intArrayOf(
         R.drawable.bluecandy,
         R.drawable.greencandy,
@@ -22,37 +32,27 @@ class MainActivity : AppCompatActivity() {
         R.drawable.purplecandy
     )
 
-    var cellWidth : Int = 0
+    var interval = 200L
     var numCells : Int = 8
-    var screenWidth : Int = 0
-    var screenHeight : Int = 0
-    var score : Int = 0
-    var interval = 100L
-
-    lateinit var cell : ArrayList<ImageView>
     var cellToBeDragged : Int = 0
     var cellToBeReplaced : Int = 0
-    var emptyCell : Int = R.drawable.transparent
-
-    lateinit var mouseHandler: Handler
-    private lateinit var scoreResult : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        scoreResult = findViewById(R.id.score)
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels
         screenHeight = displayMetrics.heightPixels
 
+        scoreResult = findViewById(R.id.score)
         cellWidth = screenWidth / numCells
-
         cell = ArrayList()
         createBoard()
 
+        // TODO: ADD CHECKS FOR VALID SWAPS
         for (imageView in cell){
             imageView.setOnTouchListener(object : OnSwipeListener(this){
                 override fun onSwipeRight() {
@@ -87,7 +87,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun createBoard(){
+    private fun createBoard(){
+
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
         gridLayout.rowCount = numCells
         gridLayout.columnCount = numCells
@@ -95,51 +96,53 @@ class MainActivity : AppCompatActivity() {
         gridLayout.layoutParams.height = screenHeight
 
         for(i in 0 until numCells * numCells){
+
             val imageView = ImageView(this)
             imageView.id = i
             imageView.layoutParams = android.view.ViewGroup.LayoutParams(cellWidth, cellWidth)
-
             imageView.maxHeight = cellWidth
             imageView.maxWidth = cellWidth
 
-            var random : Int = Math.floor(Math.random() * cellImages.size).toInt()
+            val random : Int = floor(Math.random() * cellImages.size).toInt()
 
             imageView.setImageResource(cellImages[random])
-            imageView.setTag(cellImages[random])
+            imageView.tag = cellImages[random]
 
             cell.add(imageView)
             gridLayout.addView(imageView)
-
         }
     }
 
     fun swapCells(){
-        var background1 : Int = cell.get(cellToBeReplaced).tag as Int
-        var background2 : Int = cell.get(cellToBeDragged).tag as Int
 
-        cell.get(cellToBeDragged).setImageResource(background1)
-        cell.get(cellToBeReplaced).setImageResource(background2)
+        val background1 : Int = cell[cellToBeReplaced].tag as Int
+        val background2 : Int = cell[cellToBeDragged].tag as Int
 
-        cell.get(cellToBeDragged).setTag(background1)
-        cell.get(cellToBeReplaced).setTag(background2)
+        cell[cellToBeDragged].setImageResource(background1)
+        cell[cellToBeReplaced].setImageResource(background2)
+
+        cell[cellToBeDragged].tag = background1
+        cell[cellToBeReplaced].tag = background2
     }
 
+    // Todo: I think this implementation is buggy, should probably use my previous one
     private fun moveDownCells(){
+
         val firstRow = arrayOf(1,2,3,4,5,6,7,8)
-        val list = asList(*firstRow)
+        val list = listOf(*firstRow)
         for (i in 55 downTo 0){
-            if (cell.get(i + numCells).tag as Int == emptyCell){
+            if (cell[i + numCells].tag as Int == emptyCell){
 
-                cell.get(i + numCells).setImageResource(cell.get(i).tag as Int)
-                cell.get(i + numCells).setTag(cell.get(i).tag as Int)
+                cell[i + numCells].setImageResource(cell[i].tag as Int)
+                cell[i + numCells].tag = cell[i].tag as Int
 
-                cell.get(i).setImageResource(emptyCell)
-                cell.get(i).setTag(emptyCell)
+                cell[i].setImageResource(emptyCell)
+                cell[i].tag = emptyCell
 
-                if(list.contains(i) && cell.get(i).tag == emptyCell){
-                    var randomColor : Int = abs(Math.random() * cellImages.size).toInt()
-                    cell.get(i).setImageResource(cellImages[randomColor])
-                    cell.get(i).setTag(cellImages[randomColor])
+                if(list.contains(i) && cell[i].tag == emptyCell){
+                    val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
+                    cell[i].setImageResource(cellImages[randomColor])
+                    cell[i].tag = cellImages[randomColor]
                 }
             }
         }
@@ -147,16 +150,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNewCells(){
+
         for (i in 0..7){
-            if(cell.get(i).tag as Int == emptyCell){
-                var randomColor : Int = abs(Math.random() * cellImages.size).toInt()
-                cell.get(i).setImageResource(cellImages[randomColor])
-                cell.get(i).setTag(cellImages[randomColor])
+            if(cell[i].tag as Int == emptyCell){
+                val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
+                cell[i].setImageResource(cellImages[randomColor])
+                cell[i].tag = cellImages[randomColor]
             }
         }
     }
 
-    val loopChecker : Runnable = object : Runnable {
+    private val loopChecker : Runnable = object : Runnable {
         override fun run() {
             try {
                 //checkForSpecialPatterns
@@ -175,7 +179,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    fun startLoop(){
+    private fun startLoop(){
         loopChecker.run()
     }
 
@@ -183,32 +187,33 @@ class MainActivity : AppCompatActivity() {
 
     //  ROWS
     private fun checkRowForThree(){
+
         for( i in 0..61){
-            var chosenCandy = cell.get(i).tag
-
-            var isBlank : Boolean = cell.get(i).tag == emptyCell
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
             val notValid = arrayOf(6,7,14,15,22,23,30,31,38,39,46,47,54,55)
-
-            val list = asList(*notValid)
+            val list = listOf(*notValid)
 
             if(!list.contains(i)){
-                var x = i
 
-                if(cell.get(x++).tag as Int == chosenCandy
+                if(cell[i].tag as Int == chosenCandy
                     && !isBlank
-                    && cell.get(x++).tag as Int == chosenCandy
-                    && cell.get(x).tag as Int == chosenCandy
+                    && cell[i + 1].tag as Int == chosenCandy
+                    && cell[i + 2].tag as Int == chosenCandy
                 ){
+                    // update score
                     score += 3
                     scoreResult.text = "$score"
-                    cell.get(x).setImageResource(emptyCell)
-                    cell.get(x).setTag(emptyCell)
-                    x--
-                    cell.get(x).setImageResource(emptyCell)
-                    cell.get(x).setTag(emptyCell)
-                    x--
-                    cell.get(x).setImageResource(emptyCell)
-                    cell.get(x).setTag(emptyCell)
+
+                    // remove cells
+                    cell[i - 2].setImageResource(emptyCell)
+                    cell[i - 2].tag = emptyCell
+
+                    cell[i - 1].setImageResource(emptyCell)
+                    cell[i - 1].tag = emptyCell
+
+                    cell[i].setImageResource(emptyCell)
+                    cell[i].tag = emptyCell
                 }
             }
 
@@ -226,27 +231,29 @@ class MainActivity : AppCompatActivity() {
 
     // COLUMNS
     private fun checkColumnForThree(){
+
         for( i in 0..47){
-            var chosenCandy = cell.get(i).tag
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
 
-            var isBlank : Boolean = cell.get(i).tag == emptyCell
-
-            var x = i
-            if(cell.get(x++).tag as Int == chosenCandy
+            if(cell[i].tag as Int == chosenCandy
                 && !isBlank
-                && cell.get(x+numCells).tag as Int == chosenCandy
-                && cell.get(x+2*numCells).tag as Int == chosenCandy
+                && cell[i + numCells].tag as Int == chosenCandy
+                && cell[i + 2 * numCells].tag as Int == chosenCandy
             ){
+                // update score
                 score += 3
                 scoreResult.text = "$score"
-                cell.get(x).setImageResource(emptyCell)
-                cell.get(x).setTag(emptyCell)
-                x += numCells
-                cell.get(x).setImageResource(emptyCell)
-                cell.get(x).setTag(emptyCell)
-                x += numCells
-                cell.get(x).setImageResource(emptyCell)
-                cell.get(x).setTag(emptyCell)
+
+                // 'remove' the cells
+                cell[i].setImageResource(emptyCell)
+                cell[i].tag = emptyCell
+
+                cell[i + numCells].setImageResource(emptyCell)
+                cell[i + numCells].tag = emptyCell
+
+                cell[i + 2 * numCells].setImageResource(emptyCell)
+                cell[i + 2 * numCells].tag = emptyCell
             }
         }
         moveDownCells()

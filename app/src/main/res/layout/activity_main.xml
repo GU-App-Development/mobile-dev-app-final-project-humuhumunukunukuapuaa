@@ -14,11 +14,11 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_margin="25dp"
+        android:layout_margin="20dp"
         android:background="@color/background_main"
         android:padding="2dp"
         android:layout_width="match_parent"
-        android:layout_height="90dp">
+        android:layout_height="70dp">
 
         <TextView
             android:text="@string/scoreDisplay"
@@ -42,14 +42,16 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        >
         <GridLayout
             android:id="@+id/gameBoard"
             android:orientation="horizontal"
             android:background="@color/background_board"
             android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="114dp"/>
     </LinearLayout>
 
 </LinearLayout>

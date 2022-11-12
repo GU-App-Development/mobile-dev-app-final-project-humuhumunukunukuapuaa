@@ -24,8 +24,5 @@ class WelcomeActivity : AppCompatActivity() {
         catch (e:Exception){
             e.printStackTrace()
         }
-
-
-
     }
 }
