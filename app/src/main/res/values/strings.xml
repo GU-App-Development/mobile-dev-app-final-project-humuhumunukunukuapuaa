@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ReefTriggerfish</string>
+    <string name="scoreDisplay">Score :</string>
+    <string name="scoreValue">  0  </string>
+</resources>
