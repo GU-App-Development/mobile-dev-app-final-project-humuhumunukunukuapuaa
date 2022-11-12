@@ -4,15 +4,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.zybooks.reeftriggerfish.uitel.OnSwipeListener
 import java.util.Arrays.asList
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
 
-    // Adding candies
-    var cellImages = intArrayOf(
+    private var cellImages = intArrayOf(
         R.drawable.bluecandy,
         R.drawable.greencandy,
         R.drawable.orangecandy,
@@ -24,16 +25,17 @@ class MainActivity : AppCompatActivity() {
     var cellWidth : Int = 0
     var numCells : Int = 8
     var screenWidth : Int = 0
-    lateinit var cell : ArrayList<ImageView>
+    var screenHeight : Int = 0
+    var score : Int = 0
+    var interval = 100L
 
+    lateinit var cell : ArrayList<ImageView>
     var cellToBeDragged : Int = 0
     var cellToBeReplaced : Int = 0
     var emptyCell : Int = R.drawable.transparent
 
     lateinit var mouseHandler: Handler
     private lateinit var scoreResult : TextView
-    var score : Int = 0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +46,7 @@ class MainActivity : AppCompatActivity() {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels
-
-        var screenHeight = displayMetrics.heightPixels
+        screenHeight = displayMetrics.heightPixels
 
         cellWidth = screenWidth / numCells
 
@@ -86,12 +87,30 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun startLoop(){
-
-    }
-
     fun createBoard(){
+        val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
+        gridLayout.rowCount = numCells
+        gridLayout.columnCount = numCells
+        gridLayout.layoutParams.width = screenWidth
+        gridLayout.layoutParams.height = screenHeight
 
+        for(i in 0 until numCells * numCells){
+            val imageView = ImageView(this)
+            imageView.id = i
+            imageView.layoutParams = android.view.ViewGroup.LayoutParams(cellWidth, cellWidth)
+
+            imageView.maxHeight = cellWidth
+            imageView.maxWidth = cellWidth
+
+            var random : Int = Math.floor(Math.random() * cellImages.size).toInt()
+
+            imageView.setImageResource(cellImages[random])
+            imageView.setTag(cellImages[random])
+
+            cell.add(imageView)
+            gridLayout.addView(imageView)
+
+        }
     }
 
     fun swapCells(){
@@ -116,8 +135,48 @@ class MainActivity : AppCompatActivity() {
 
                 cell.get(i).setImageResource(emptyCell)
                 cell.get(i).setTag(emptyCell)
+
+                if(list.contains(i) && cell.get(i).tag == emptyCell){
+                    var randomColor : Int = abs(Math.random() * cellImages.size).toInt()
+                    cell.get(i).setImageResource(cellImages[randomColor])
+                    cell.get(i).setTag(cellImages[randomColor])
+                }
             }
         }
+        createNewCells()
+    }
+
+    private fun createNewCells(){
+        for (i in 0..7){
+            if(cell.get(i).tag as Int == emptyCell){
+                var randomColor : Int = abs(Math.random() * cellImages.size).toInt()
+                cell.get(i).setImageResource(cellImages[randomColor])
+                cell.get(i).setTag(cellImages[randomColor])
+            }
+        }
+    }
+
+    val loopChecker : Runnable = object : Runnable {
+        override fun run() {
+            try {
+                //checkForSpecialPatterns
+
+                //checkRowForFive
+                //checkColumnForFive
+                //checkRowForFour
+                //checkColumnForFour
+                checkRowForThree()
+                checkColumnForThree()
+
+                moveDownCells()
+            }
+            finally {
+                mouseHandler.postDelayed(this, interval)
+            }
+        }
+    }
+    fun startLoop(){
+        loopChecker.run()
     }
 
     // *************** SCORE CHECKING ***************
