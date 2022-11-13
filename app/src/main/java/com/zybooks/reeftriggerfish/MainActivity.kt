@@ -12,8 +12,8 @@ import java.util.Arrays.asList
 import kotlin.math.abs
 import kotlin.math.floor
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity()
+{
     private lateinit var cell : ArrayList<ImageView>
     private lateinit var scoreResult : TextView
     private lateinit var mouseHandler: Handler
@@ -22,6 +22,14 @@ class MainActivity : AppCompatActivity() {
     private var screenWidth : Int = 0
     private var screenHeight : Int = 0
     private var score : Int = 0
+
+    //TODO: Edit game view to display winCon criteria
+    private var scoreTarget : Int = 0
+    private var movesLeft : Int = 0
+    private var winCon : String = ""
+    private var isGameOver : Boolean = false
+    private var didUserWin : Boolean = false
+
     private var emptyCell : Int = R.drawable.transparent
     private var cellImages = intArrayOf(
         R.drawable.bluecandy,
@@ -37,8 +45,9 @@ class MainActivity : AppCompatActivity() {
     var cellToBeDragged : Int = 0
     var cellToBeReplaced : Int = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-
+    // *************** OBJECT AND BOARD CREATION ***************
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -82,13 +91,16 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
+        // TODO: Manipulate 'winCon' to adjust game for various win conditions
+        winCon = ""
+        scoreTarget = 50
+        movesLeft = 10
+
         mouseHandler = Handler()
         startLoop()
-
     }
 
     private fun createBoard(){
-
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
         gridLayout.rowCount = numCells
         gridLayout.columnCount = numCells
@@ -96,7 +108,6 @@ class MainActivity : AppCompatActivity() {
         gridLayout.layoutParams.height = screenHeight
 
         for(i in 0 until numCells * numCells){
-
             val imageView = ImageView(this)
             imageView.id = i
             imageView.layoutParams = android.view.ViewGroup.LayoutParams(cellWidth, cellWidth)
@@ -113,8 +124,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun swapCells(){
+    // *************** CORE GAME FUNCTIONS ***************
+    private val loopChecker : Runnable = object : Runnable {
+        override fun run() {
+            try {
+                if(!isGameOver){
+                    checkIfGameOver()
 
+                    //checkBoardForPlusPattern()
+
+                    checkRowForFive()
+                    checkColumnForFive()
+                    checkRowForFour()
+                    checkColumnForFour()
+                    checkRowForThree()
+                    checkColumnForThree()
+
+                    moveDownCells()
+                } else {
+                    clearBoard()
+                }
+            }
+            finally {
+                mouseHandler.postDelayed(this, interval)
+            }
+        }
+    }
+    private fun startLoop(){loopChecker.run()}
+
+    fun swapCells(){
         val background1 : Int = cell[cellToBeReplaced].tag as Int
         val background2 : Int = cell[cellToBeDragged].tag as Int
 
@@ -123,11 +161,12 @@ class MainActivity : AppCompatActivity() {
 
         cell[cellToBeDragged].tag = background1
         cell[cellToBeReplaced].tag = background2
+
+        movesLeft--
     }
 
-    // Todo: I think this implementation is buggy
+    // FIXME: I think this implementation is buggy
     private fun moveDownCells(){
-
         val firstRow = arrayOf(1,2,3,4,5,6,7,8)
         val list = listOf(*firstRow)
         for (i in 55 downTo 0){
@@ -150,7 +189,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNewCells(){
-
         for (i in 0..7){
             if(cell[i].tag as Int == emptyCell){
                 val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
@@ -160,27 +198,65 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val loopChecker : Runnable = object : Runnable {
-        override fun run() {
-            try {
-                //checkBoardForPlusPattern()
-
-                checkRowForFive()
-                checkColumnForFive()
-                checkRowForFour()
-                checkColumnForFour()
-                checkRowForThree()
-                checkColumnForThree()
-
-                moveDownCells()
+    private fun checkIfGameOver(){
+        when (winCon) {
+            "moves" -> {
+                if(movesLeft <= 0){
+                    didUserWin = true
+                    isGameOver = true
+                }
             }
-            finally {
-                mouseHandler.postDelayed(this, interval)
+            "score" -> {
+                if(score >= scoreTarget){
+                    didUserWin = true
+                    isGameOver = true
+                }
+                if(score < scoreTarget && movesLeft <= 0){
+                    didUserWin = false
+                    isGameOver = true
+                }
+            }
+            else -> {
+                // Possible change: let game continue until user says they want to be done?
+
+                // Currently combines score and moves (i.e. "get score >= 40 in 15 or less moves")
+                if(score >= scoreTarget && movesLeft >= 0){
+                    didUserWin = true
+                    isGameOver = true
+                }
+                if(movesLeft <= 0){
+                    didUserWin = false
+                    isGameOver = true
+                }
             }
         }
     }
-    private fun startLoop(){
-        loopChecker.run()
+
+    private fun clearBoard(){
+        val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
+        gridLayout.rowCount = numCells
+        gridLayout.columnCount = numCells
+        gridLayout.layoutParams.width = screenWidth
+        gridLayout.layoutParams.height = screenHeight
+
+        for(i in 0 until numCells * numCells){
+            cell[i].setImageResource(emptyCell)
+            cell[i].tag = emptyCell
+            gridLayout.getChildAt(i).tag = emptyCell
+        }
+
+        // Display feedback to user
+        if(didUserWin){
+            gridLayout.setBackgroundResource(R.drawable.won_game)
+        } else {
+            gridLayout.setBackgroundResource(R.drawable.lost_game)
+        }
+
+        //promptNewGame()
+    }
+
+    private fun promptNewGame(){
+
     }
 
     // *************** SCORE CHECKING ***************
