@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         cell[cellToBeReplaced].tag = background2
     }
 
-    // Todo: I think this implementation is buggy, should probably use my previous one
+    // Todo: I think this implementation is buggy
     private fun moveDownCells(){
 
         val firstRow = arrayOf(1,2,3,4,5,6,7,8)
@@ -163,12 +163,12 @@ class MainActivity : AppCompatActivity() {
     private val loopChecker : Runnable = object : Runnable {
         override fun run() {
             try {
-                //checkForSpecialPatterns
+                //checkBoardForPlusPattern()
 
-                //checkRowForFive
-                //checkColumnForFive
-                //checkRowForFour
-                //checkColumnForFour
+                checkRowForFive()
+                checkColumnForFive()
+                checkRowForFour()
+                checkColumnForFour()
                 checkRowForThree()
                 checkColumnForThree()
 
@@ -186,8 +186,8 @@ class MainActivity : AppCompatActivity() {
     // *************** SCORE CHECKING ***************
 
     //  ROWS
-    private fun checkRowForThree(){
-
+    private fun checkRowForThree()
+    {
         for( i in 0..61){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -206,32 +206,101 @@ class MainActivity : AppCompatActivity() {
                     scoreResult.text = "$score"
 
                     // remove cells
-                    cell[i - 2].setImageResource(emptyCell)
-                    cell[i - 2].tag = emptyCell
-
-                    cell[i - 1].setImageResource(emptyCell)
-                    cell[i - 1].tag = emptyCell
-
                     cell[i].setImageResource(emptyCell)
                     cell[i].tag = emptyCell
+
+                    cell[i + 1].setImageResource(emptyCell)
+                    cell[i + 1].tag = emptyCell
+
+                    cell[i + 2].setImageResource(emptyCell)
+                    cell[i + 2].tag = emptyCell
                 }
             }
-
         }
         moveDownCells()
     }
 
     private fun checkRowForFour(){
+        for( i in 0..60){
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
+            val notValid = arrayOf(5,6,7,13,14,15,21,22,23,29,30,31,37,38,39,45,46,47,53,54,55,61,62,63)
+            val list = listOf(*notValid)
 
+            if(!list.contains(i)){
+
+                if(cell[i].tag as Int == chosenCandy
+                    && !isBlank
+                    && cell[i + 1].tag as Int == chosenCandy
+                    && cell[i + 2].tag as Int == chosenCandy
+                    && cell[i + 3].tag as Int == chosenCandy
+                ){
+                    // update score
+                    score += 4
+                    scoreResult.text = "$score"
+
+                    // remove cells
+                    cell[i].setImageResource(emptyCell)
+                    cell[i].tag = emptyCell
+
+                    cell[i + 1].setImageResource(emptyCell)
+                    cell[i + 1].tag = emptyCell
+
+                    cell[i + 2].setImageResource(emptyCell)
+                    cell[i + 2].tag = emptyCell
+
+                    cell[i + 3].setImageResource(emptyCell)
+                    cell[i + 3].tag = emptyCell
+                }
+            }
+        }
+        moveDownCells()
     }
 
     private fun checkRowForFive(){
+        for( i in 0..59){
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
+            val notValid = arrayOf(4,5,6,7,12,13,14,15,20,21,22,23,28,29,30,31,36,37,38,39,44,45,46,47,52,53,54,55,60,61,62,63)
+            val list = listOf(*notValid)
 
+            if(!list.contains(i)){
+
+                if(cell[i].tag as Int == chosenCandy
+                    && !isBlank
+                    && cell[i + 1].tag as Int == chosenCandy
+                    && cell[i + 2].tag as Int == chosenCandy
+                    && cell[i + 3].tag as Int == chosenCandy
+                    && cell[i + 4].tag as Int == chosenCandy
+                ){
+                    // update score
+                    score += 5
+                    scoreResult.text = "$score"
+
+                    // remove cells
+                    cell[i].setImageResource(emptyCell)
+                    cell[i].tag = emptyCell
+
+                    cell[i + 1].setImageResource(emptyCell)
+                    cell[i + 1].tag = emptyCell
+
+                    cell[i + 2].setImageResource(emptyCell)
+                    cell[i + 2].tag = emptyCell
+
+                    cell[i + 3].setImageResource(emptyCell)
+                    cell[i + 3].tag = emptyCell
+
+                    cell[i + 4].setImageResource(emptyCell)
+                    cell[i + 4].tag = emptyCell
+                }
+            }
+        }
+        moveDownCells()
     }
 
     // COLUMNS
-    private fun checkColumnForThree(){
-
+    private fun checkColumnForThree()
+    {
         for( i in 0..47){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -260,14 +329,77 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkColumnForFour(){
+        for( i in 0..40){
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
 
+            if(cell[i].tag as Int == chosenCandy
+                && !isBlank
+                && cell[i + numCells].tag as Int == chosenCandy
+                && cell[i + 2 * numCells].tag as Int == chosenCandy
+                && cell[i + 3 * numCells].tag as Int == chosenCandy
+            ){
+                // update score
+                score += 4
+                scoreResult.text = "$score"
+
+                // 'remove' the cells
+                cell[i].setImageResource(emptyCell)
+                cell[i].tag = emptyCell
+
+                cell[i + numCells].setImageResource(emptyCell)
+                cell[i + numCells].tag = emptyCell
+
+                cell[i + 2 * numCells].setImageResource(emptyCell)
+                cell[i + 2 * numCells].tag = emptyCell
+
+                cell[i + 3 * numCells].setImageResource(emptyCell)
+                cell[i + 3 * numCells].tag = emptyCell
+            }
+        }
+        moveDownCells()
     }
 
     private fun checkColumnForFive(){
+        for( i in 0..32){
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
 
+            if(cell[i].tag as Int == chosenCandy
+                && !isBlank
+                && cell[i + numCells].tag as Int == chosenCandy
+                && cell[i + 2 * numCells].tag as Int == chosenCandy
+                && cell[i + 3 * numCells].tag as Int == chosenCandy
+                && cell[i + 4 * numCells].tag as Int == chosenCandy
+            ){
+                // update score
+                score += 5
+                scoreResult.text = "$score"
+
+                // 'remove' the cells
+                cell[i].setImageResource(emptyCell)
+                cell[i].tag = emptyCell
+
+                cell[i + numCells].setImageResource(emptyCell)
+                cell[i + numCells].tag = emptyCell
+
+                cell[i + 2 * numCells].setImageResource(emptyCell)
+                cell[i + 2 * numCells].tag = emptyCell
+
+                cell[i + 3 * numCells].setImageResource(emptyCell)
+                cell[i + 3 * numCells].tag = emptyCell
+
+                cell[i + 4 * numCells].setImageResource(emptyCell)
+                cell[i + 4 * numCells].tag = emptyCell
+            }
+        }
+        moveDownCells()
     }
 
     // SPECIAL PATTERNS
+    private fun checkBoardForPlusPattern(){
+
+    }
 
 
 
