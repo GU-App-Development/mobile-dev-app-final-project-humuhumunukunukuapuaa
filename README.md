@@ -1,7 +1,10 @@
 # mobile-dev-app-final-project-humuhumunukunukuapuaa
 
-# Team Name: Humuhumunukunukuapua'a
-# Team Members: Dominic Bevilacqua and Katie Stevens
+# Team Name: 
+Humuhumunukunukuapua'a
+# Team Members: 
+Dominic Bevilacqua
+Katie Stevens
 
 
 # Abstract:
