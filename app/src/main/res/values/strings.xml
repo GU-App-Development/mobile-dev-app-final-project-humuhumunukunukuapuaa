@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ReefTriggerfish</string>
     <string name="score_display">Score: %d</string>
+    <string name="moves_left">Moves Left: %d</string>
+    <string name="score_target">Score Target: %d</string>
 <!--    <string name="scoreValue">  0  </string>-->
 
     <string name="new_game_text">New Game</string>

@@ -19,9 +19,8 @@ class MainActivity : AppCompatActivity()
 {
     private lateinit var cell : ArrayList<ImageView>
     private lateinit var scoreResult : TextView
-//    private lateinit var gameResultLayout: LinearLayout
-//    private lateinit var resultMessageView: TextView
-//    private lateinit var newGameButton: Button
+    private lateinit var scoreTargetView: TextView
+    private lateinit var movesLeftView: TextView
     private lateinit var mouseHandler: Handler
 
     private var cellWidth : Int = 0
@@ -55,6 +54,15 @@ class MainActivity : AppCompatActivity()
     // *************** OBJECT AND BOARD CREATION ***************
     override fun onCreate(savedInstanceState: Bundle?)
     {
+
+        /*
+            KT
+            TODO: 1. save instance on rotate.
+            TODO: 2. Add moves left & score target
+            TODO: 3. Check if swipe is a valid move.
+            TODO: 4. gameboard sinks a bit on new game.
+         */
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -63,8 +71,7 @@ class MainActivity : AppCompatActivity()
         screenWidth = displayMetrics.widthPixels
         screenHeight = displayMetrics.heightPixels
 
-        scoreResult = findViewById(R.id.score_view)
-        scoreResult.text = getString(R.string.score_display, score)
+
 
         cellWidth = screenWidth / numCells
         cell = ArrayList()
@@ -105,6 +112,16 @@ class MainActivity : AppCompatActivity()
         scoreTarget = 50
         movesLeft = 10
         totalMoves = movesLeft
+
+        // Display Values (Score, Target Score, Moves Left)
+        scoreResult = findViewById(R.id.score_view)
+        scoreResult.text = getString(R.string.score_display, score)
+
+        scoreTargetView = findViewById(R.id.score_target_view)
+        scoreTargetView.text = getString(R.string.score_target, scoreTarget)
+
+        movesLeftView = findViewById(R.id.moves_left_view)
+        movesLeftView.text = getString(R.string.moves_left, movesLeft)
 
         mouseHandler = Handler()
         startLoop()
@@ -174,6 +191,7 @@ class MainActivity : AppCompatActivity()
         cell[cellToBeReplaced].tag = background2
 
         movesLeft--
+        movesLeftView.text = getString(R.string.moves_left, movesLeft)
     }
 
     // FIXME: I think this implementation is buggy
@@ -296,6 +314,11 @@ class MainActivity : AppCompatActivity()
         score = 0
         didUserWin = false
         isGameOver = false
+
+        // update display values
+        scoreResult.text = getString(R.string.score_display, score)
+//        scoreTargetView.text = getString(R.string.score_target, scoreTarget)
+        movesLeftView.text = getString(R.string.moves_left, movesLeft)
 
         // TODO: on new game, board slides down a little but after creation. not sure why.
         createBoard()

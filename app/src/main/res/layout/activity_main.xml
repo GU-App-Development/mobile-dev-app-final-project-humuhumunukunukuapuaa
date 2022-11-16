@@ -12,64 +12,82 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_gravity="center"
         android:layout_margin="20dp"
         android:background="@color/background_main"
         android:padding="2dp"
         android:layout_width="match_parent"
         android:layout_height="70dp">
 
-<!--        <TextView-->
-<!--            android:text="@string/scoreDisplay"-->
-<!--            android:textStyle="bold|normal"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="28sp"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"/>-->
         <TextView
             android:id="@+id/score_view"
+            android:layout_width="175dp"
+            android:layout_height="match_parent"
             android:text="@string/score_display"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold|normal"
+            android:gravity="center"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="1">
+
+            <TextView
+                android:id="@+id/score_target_view"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/score_target"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold|normal"/>
+
+            <TextView
+                android:id="@+id/moves_left_view"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="@string/moves_left"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold|normal"/>
+
+        </GridLayout>
+
+    </LinearLayout>
+        <GridLayout
+            android:id="@+id/gameBoard"
+            android:orientation="horizontal"
+            android:background="@color/background_board"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="114dp"/>
+
+        <LinearLayout
+            android:id="@+id/game_result_layout"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+        <TextView
+            android:id="@+id/result_message_view"
+            android:text="TEST"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textStyle="bold|normal"
             android:textColor="@color/white"
-            android:textSize="28sp"
+            android:textSize="28sp" />
+
+        <Button
+            android:id="@+id/new_game_button"
+            android:text="@string/new_game_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
-
-    <GridLayout
-        android:id="@+id/gameBoard"
-        android:orientation="horizontal"
-        android:background="@color/background_board"
-        android:layout_gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="114dp"/>
-
-    <LinearLayout
-        android:id="@+id/game_result_layout"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
-
-    <TextView
-        android:id="@+id/result_message_view"
-        android:text="TEST"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold|normal"
-        android:textColor="@color/white"
-        android:textSize="28sp" />
-
-    <Button
-        android:id="@+id/new_game_button"
-        android:text="@string/new_game_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
-</LinearLayout>
-
 </LinearLayout>
