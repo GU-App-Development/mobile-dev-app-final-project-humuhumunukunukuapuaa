@@ -20,16 +20,16 @@
         android:layout_width="match_parent"
         android:layout_height="70dp">
 
+<!--        <TextView-->
+<!--            android:text="@string/scoreDisplay"-->
+<!--            android:textStyle="bold|normal"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="28sp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"/>-->
         <TextView
-            android:text="@string/scoreDisplay"
-            android:textStyle="bold|normal"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/score"
-            android:text="@string/scoreValue"
+            android:id="@+id/score_view"
+            android:text="@string/score_display"
             android:textStyle="bold|normal"
             android:textColor="@color/white"
             android:textSize="28sp"

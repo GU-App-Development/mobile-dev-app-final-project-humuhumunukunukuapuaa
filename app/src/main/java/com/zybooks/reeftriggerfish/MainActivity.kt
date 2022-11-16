@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity()
     //TODO: Edit game view to display winCon criteria
     private var scoreTarget : Int = 0
     private var movesLeft : Int = 0
+    private var totalMoves: Int = 0
     private var winCon : String = ""
     private var isGameOver : Boolean = false
     private var didUserWin : Boolean = false
@@ -62,7 +63,9 @@ class MainActivity : AppCompatActivity()
         screenWidth = displayMetrics.widthPixels
         screenHeight = displayMetrics.heightPixels
 
-        scoreResult = findViewById(R.id.score)
+        scoreResult = findViewById(R.id.score_view)
+        scoreResult.text = getString(R.string.score_display, score)
+
         cellWidth = screenWidth / numCells
         cell = ArrayList()
         createBoard()
@@ -101,6 +104,7 @@ class MainActivity : AppCompatActivity()
         winCon = ""
         scoreTarget = 50
         movesLeft = 10
+        totalMoves = movesLeft
 
         mouseHandler = Handler()
         startLoop()
@@ -317,8 +321,10 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 2].tag as Int == chosenCandy
                 ){
                     // update score
-                    score += 3
-                    scoreResult.text = "$score"
+                    if (movesLeft < totalMoves) {
+                        score += 3
+                        scoreResult.text = getString(R.string.score_display, score)
+                    }
 
                     // remove cells
                     cell[i].setImageResource(emptyCell)
@@ -351,8 +357,10 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 3].tag as Int == chosenCandy
                 ){
                     // update score
-                    score += 4
-                    scoreResult.text = "$score"
+                    if (movesLeft < totalMoves) {
+                        score += 4
+                        scoreResult.text = getString(R.string.score_display, score)
+                    }
 
                     // remove cells
                     cell[i].setImageResource(emptyCell)
@@ -389,8 +397,10 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 4].tag as Int == chosenCandy
                 ){
                     // update score
-                    score += 5
-                    scoreResult.text = "$score"
+                    if (movesLeft < totalMoves) {
+                        score += 5
+                        scoreResult.text = getString(R.string.score_display, score)
+                    }
 
                     // remove cells
                     cell[i].setImageResource(emptyCell)
@@ -426,8 +436,10 @@ class MainActivity : AppCompatActivity()
                 && cell[i + 2 * numCells].tag as Int == chosenCandy
             ){
                 // update score
-                score += 3
-                scoreResult.text = "$score"
+                if (movesLeft < totalMoves) {
+                    score += 3
+                    scoreResult.text = getString(R.string.score_display, score)
+                }
 
                 // 'remove' the cells
                 cell[i].setImageResource(emptyCell)
@@ -455,8 +467,10 @@ class MainActivity : AppCompatActivity()
                 && cell[i + 3 * numCells].tag as Int == chosenCandy
             ){
                 // update score
-                score += 4
-                scoreResult.text = "$score"
+                if (movesLeft < totalMoves) {
+                    score += 4
+                    scoreResult.text = getString(R.string.score_display, score)
+                }
 
                 // 'remove' the cells
                 cell[i].setImageResource(emptyCell)
@@ -488,8 +502,10 @@ class MainActivity : AppCompatActivity()
                 && cell[i + 4 * numCells].tag as Int == chosenCandy
             ){
                 // update score
-                score += 5
-                scoreResult.text = "$score"
+                if (movesLeft < totalMoves) {
+                    score += 5
+                    scoreResult.text = getString(R.string.score_display, score)
+                }
 
                 // 'remove' the cells
                 cell[i].setImageResource(emptyCell)
