@@ -151,18 +151,6 @@ class MainActivity : AppCompatActivity()
         }
     }
 
-    private fun resetBoard() {
-        clearBoard()
-
-        for(i in 0 until numCells * numCells){
-            if(cell[i].tag as Int == emptyCell){
-                val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
-                cell[i].setImageResource(cellImages[randomColor])
-                cell[i].tag = cellImages[randomColor]
-            }
-        }
-    }
-
     // *************** CORE GAME FUNCTIONS ***************
     private val loopChecker : Runnable = object : Runnable {
         override fun run() {
@@ -190,9 +178,13 @@ class MainActivity : AppCompatActivity()
             }
         }
     }
+
     private fun startLoop(){loopChecker.run()}
 
     fun swapCells(){
+        Log.d("cell1:", cellToBeDragged.toString())
+        Log.d("cell2:", cellToBeReplaced.toString())
+
         val background1 : Int = cell[cellToBeReplaced].tag as Int
         val background2 : Int = cell[cellToBeDragged].tag as Int
 
@@ -202,8 +194,17 @@ class MainActivity : AppCompatActivity()
         cell[cellToBeDragged].tag = background1
         cell[cellToBeReplaced].tag = background2
 
-        movesLeft--
-        movesLeftView.text = getString(R.string.moves_left, movesLeft)
+        if (!checkValidMove(cellToBeDragged, cellToBeReplaced)) {
+            // unswap if not valid move
+            cell[cellToBeDragged].tag = background2
+            cell[cellToBeDragged].setImageResource(background2)
+            cell[cellToBeReplaced].tag = background1
+            cell[cellToBeReplaced].setImageResource(background1)
+        }
+        else {
+            movesLeft--
+            movesLeftView.text = getString(R.string.moves_left, movesLeft)
+        }
     }
 
     // FIXME: I think this implementation is buggy
@@ -287,6 +288,18 @@ class MainActivity : AppCompatActivity()
         }
     }
 
+    private fun resetBoard() {
+        clearBoard()
+
+        for(i in 0 until numCells * numCells){
+            if(cell[i].tag as Int == emptyCell){
+                val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
+                cell[i].setImageResource(cellImages[randomColor])
+                cell[i].tag = cellImages[randomColor]
+            }
+        }
+    }
+
     private fun showGameResult() {
         // hide game board
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
@@ -336,12 +349,22 @@ class MainActivity : AppCompatActivity()
 
     // *************** SCORE CHECKING ***************
 
+    private fun checkValidMove(cellToBeDragged: Int, cellToBeReplaced: Int): Boolean {
+        val validMove = (checkRowForFive(true) || checkColumnForFive(true) ||
+                checkRowForFour(true) ||checkColumnForFour(true) ||
+                checkRowForThree(true) || checkColumnForThree(true))
+
+        Log.d("isValidMove", validMove.toString())
+
+        return validMove
+    }
+
     //  ROWS
-    private fun checkRowForThree()
-    {
+    private fun checkRowForThree(check: Boolean = false): Boolean {
         for( i in 0..61){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
+            // don't check last 2 columns
             val notValid = arrayOf(6,7,14,15,22,23,30,31,38,39,46,47,54,55)
             val list = listOf(*notValid)
 
@@ -352,6 +375,10 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 1].tag as Int == chosenCandy
                     && cell[i + 2].tag as Int == chosenCandy
                 ){
+                    // if checking for valid return true
+                    if (check) {
+                        return true
+                    }
                     // update score
                     if (movesLeft < totalMoves) {
                         score += 3
@@ -367,13 +394,14 @@ class MainActivity : AppCompatActivity()
 
                     cell[i + 2].setImageResource(emptyCell)
                     cell[i + 2].tag = emptyCell
+                    moveDownCells()
                 }
             }
         }
-        moveDownCells()
+        return false
     }
 
-    private fun checkRowForFour(){
+    private fun checkRowForFour(check: Boolean = false): Boolean {
         for( i in 0..60){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -388,6 +416,11 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 2].tag as Int == chosenCandy
                     && cell[i + 3].tag as Int == chosenCandy
                 ){
+//                    Log.d("inCheckForFour", "rowOf4Exists")
+                    // if checking for valid return true
+                    if (check) {
+                        return true
+                    }
                     // update score
                     if (movesLeft < totalMoves) {
                         score += 4
@@ -406,13 +439,15 @@ class MainActivity : AppCompatActivity()
 
                     cell[i + 3].setImageResource(emptyCell)
                     cell[i + 3].tag = emptyCell
+
+                    moveDownCells()
                 }
             }
         }
-        moveDownCells()
+        return false
     }
 
-    private fun checkRowForFive(){
+    private fun checkRowForFive(check: Boolean = false): Boolean{
         for( i in 0..59){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -428,6 +463,10 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 3].tag as Int == chosenCandy
                     && cell[i + 4].tag as Int == chosenCandy
                 ){
+                    // if checking for valid return true
+                    if (check) {
+                        return true
+                    }
                     // update score
                     if (movesLeft < totalMoves) {
                         score += 5
@@ -449,15 +488,16 @@ class MainActivity : AppCompatActivity()
 
                     cell[i + 4].setImageResource(emptyCell)
                     cell[i + 4].tag = emptyCell
+
+                    moveDownCells()
                 }
             }
         }
-        moveDownCells()
+        return false
     }
 
     // COLUMNS
-    private fun checkColumnForThree()
-    {
+    private fun checkColumnForThree(check: Boolean = false): Boolean {
         for( i in 0..47){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -467,6 +507,11 @@ class MainActivity : AppCompatActivity()
                 && cell[i + numCells].tag as Int == chosenCandy
                 && cell[i + 2 * numCells].tag as Int == chosenCandy
             ){
+                // if checking for valid return true
+                if (check) {
+                    return true
+                }
+
                 // update score
                 if (movesLeft < totalMoves) {
                     score += 3
@@ -482,12 +527,13 @@ class MainActivity : AppCompatActivity()
 
                 cell[i + 2 * numCells].setImageResource(emptyCell)
                 cell[i + 2 * numCells].tag = emptyCell
+                moveDownCells()
             }
         }
-        moveDownCells()
+        return false
     }
 
-    private fun checkColumnForFour(){
+    private fun checkColumnForFour(check: Boolean = false): Boolean{
         for( i in 0..40){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -498,6 +544,11 @@ class MainActivity : AppCompatActivity()
                 && cell[i + 2 * numCells].tag as Int == chosenCandy
                 && cell[i + 3 * numCells].tag as Int == chosenCandy
             ){
+                // if checking for valid return true
+                if (check) {
+                    return true
+                }
+
                 // update score
                 if (movesLeft < totalMoves) {
                     score += 4
@@ -516,12 +567,13 @@ class MainActivity : AppCompatActivity()
 
                 cell[i + 3 * numCells].setImageResource(emptyCell)
                 cell[i + 3 * numCells].tag = emptyCell
+                moveDownCells()
             }
         }
-        moveDownCells()
+        return false
     }
 
-    private fun checkColumnForFive(){
+    private fun checkColumnForFive(check: Boolean = false): Boolean{
         for( i in 0..32){
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
@@ -533,6 +585,10 @@ class MainActivity : AppCompatActivity()
                 && cell[i + 3 * numCells].tag as Int == chosenCandy
                 && cell[i + 4 * numCells].tag as Int == chosenCandy
             ){
+                // if checking for valid return true
+                if (check) {
+                    return true
+                }
                 // update score
                 if (movesLeft < totalMoves) {
                     score += 5
@@ -554,9 +610,10 @@ class MainActivity : AppCompatActivity()
 
                 cell[i + 4 * numCells].setImageResource(emptyCell)
                 cell[i + 4 * numCells].tag = emptyCell
+                moveDownCells()
             }
         }
-        moveDownCells()
+        return false
     }
 
     // SPECIAL PATTERNS
