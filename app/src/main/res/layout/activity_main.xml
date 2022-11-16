@@ -76,7 +76,6 @@
 
         <TextView
             android:id="@+id/result_message_view"
-            android:text="TEST"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold|normal"

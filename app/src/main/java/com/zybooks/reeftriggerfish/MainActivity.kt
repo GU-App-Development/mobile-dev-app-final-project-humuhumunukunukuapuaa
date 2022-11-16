@@ -151,6 +151,18 @@ class MainActivity : AppCompatActivity()
         }
     }
 
+    private fun resetBoard() {
+        clearBoard()
+
+        for(i in 0 until numCells * numCells){
+            if(cell[i].tag as Int == emptyCell){
+                val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
+                cell[i].setImageResource(cellImages[randomColor])
+                cell[i].tag = cellImages[randomColor]
+            }
+        }
+    }
+
     // *************** CORE GAME FUNCTIONS ***************
     private val loopChecker : Runnable = object : Runnable {
         override fun run() {
@@ -285,12 +297,10 @@ class MainActivity : AppCompatActivity()
         val resultMessageView = findViewById<TextView>(R.id.result_message_view)
 
         // Display feedback to user
+        // TODO: make end screen look nicer :)
         if(didUserWin){
-//            gridLayout.setBackgroundResource(R.drawable.won_game)
             resultMessageView.text = getString(R.string.win_game_message)
-
         } else {
-//            gridLayout.setBackgroundResource(R.drawable.lost_game)
             resultMessageView.text = getString(R.string.lose_game_message)
         }
 
@@ -320,8 +330,7 @@ class MainActivity : AppCompatActivity()
 //        scoreTargetView.text = getString(R.string.score_target, scoreTarget)
         movesLeftView.text = getString(R.string.moves_left, movesLeft)
 
-        // TODO: on new game, board slides down a little but after creation. not sure why.
-        createBoard()
+        resetBoard()
         startLoop()
     }
 
