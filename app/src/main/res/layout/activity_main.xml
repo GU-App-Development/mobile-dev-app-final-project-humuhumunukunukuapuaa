@@ -37,21 +37,39 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
+    <GridLayout
+        android:id="@+id/gameBoard"
+        android:orientation="horizontal"
+        android:background="@color/background_board"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="114dp"/>
+
     <LinearLayout
+        android:id="@+id/game_result_layout"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-        <GridLayout
-            android:id="@+id/gameBoard"
-            android:orientation="horizontal"
-            android:background="@color/background_board"
-            android:layout_gravity="center_vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="114dp"/>
-    </LinearLayout>
+        android:visibility="gone">
+
+    <TextView
+        android:id="@+id/result_message_view"
+        android:text="TEST"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|normal"
+        android:textColor="@color/white"
+        android:textSize="28sp" />
+
+    <Button
+        android:id="@+id/new_game_button"
+        android:text="@string/new_game_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+</LinearLayout>
 
 </LinearLayout>

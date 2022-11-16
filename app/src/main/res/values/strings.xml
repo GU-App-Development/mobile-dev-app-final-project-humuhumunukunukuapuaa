@@ -2,4 +2,8 @@
     <string name="app_name">ReefTriggerfish</string>
     <string name="scoreDisplay">Score : </string>
     <string name="scoreValue">  0  </string>
+
+    <string name="new_game_text">New Game</string>
+    <string name="win_game_message">You Win!</string>
+    <string name="lose_game_message">You Lose!</string>
 </resources>

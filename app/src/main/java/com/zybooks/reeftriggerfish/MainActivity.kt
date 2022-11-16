@@ -1,12 +1,16 @@
 package com.zybooks.reeftriggerfish
 
+import android.app.ActionBar.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.zybooks.reeftriggerfish.uitel.OnSwipeListener
 import java.util.Arrays.asList
 import kotlin.math.abs
@@ -16,6 +20,8 @@ class MainActivity : AppCompatActivity()
 {
     private lateinit var cell : ArrayList<ImageView>
     private lateinit var scoreResult : TextView
+    private lateinit var gameResultLayout: LinearLayout
+    private lateinit var resultMessageView: TextView
     private lateinit var mouseHandler: Handler
 
     private var cellWidth : Int = 0
@@ -245,11 +251,18 @@ class MainActivity : AppCompatActivity()
             gridLayout.getChildAt(i).tag = emptyCell
         }
 
+        gridLayout.isVisible = false
+        gameResultLayout = findViewById(R.id.game_result_layout)
+        gameResultLayout.isVisible = true
+        resultMessageView = findViewById(R.id.result_message_view)
         // Display feedback to user
         if(didUserWin){
-            gridLayout.setBackgroundResource(R.drawable.won_game)
+//            gridLayout.setBackgroundResource(R.drawable.won_game)
+            resultMessageView.text = getString(R.string.win_game_message)
+
         } else {
-            gridLayout.setBackgroundResource(R.drawable.lost_game)
+//            gridLayout.setBackgroundResource(R.drawable.lost_game)
+            resultMessageView.text = getString(R.string.lose_game_message)
         }
 
         //promptNewGame()
