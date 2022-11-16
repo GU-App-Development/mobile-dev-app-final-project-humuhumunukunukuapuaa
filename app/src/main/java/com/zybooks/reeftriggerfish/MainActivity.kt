@@ -5,11 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
+import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.isVisible
 import com.zybooks.reeftriggerfish.uitel.OnSwipeListener
 import java.util.Arrays.asList
@@ -20,8 +19,9 @@ class MainActivity : AppCompatActivity()
 {
     private lateinit var cell : ArrayList<ImageView>
     private lateinit var scoreResult : TextView
-    private lateinit var gameResultLayout: LinearLayout
-    private lateinit var resultMessageView: TextView
+//    private lateinit var gameResultLayout: LinearLayout
+//    private lateinit var resultMessageView: TextView
+//    private lateinit var newGameButton: Button
     private lateinit var mouseHandler: Handler
 
     private var cellWidth : Int = 0
@@ -149,6 +149,7 @@ class MainActivity : AppCompatActivity()
                     moveDownCells()
                 } else {
                     clearBoard()
+                    showGameResult()
                 }
             }
             finally {
@@ -250,11 +251,17 @@ class MainActivity : AppCompatActivity()
             cell[i].tag = emptyCell
             gridLayout.getChildAt(i).tag = emptyCell
         }
+    }
 
+    private fun showGameResult() {
+        // hide game board
+        val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
         gridLayout.isVisible = false
-        gameResultLayout = findViewById(R.id.game_result_layout)
+
+        val gameResultLayout = findViewById<LinearLayout>(R.id.game_result_layout)
         gameResultLayout.isVisible = true
-        resultMessageView = findViewById(R.id.result_message_view)
+        val resultMessageView = findViewById<TextView>(R.id.result_message_view)
+
         // Display feedback to user
         if(didUserWin){
 //            gridLayout.setBackgroundResource(R.drawable.won_game)
@@ -265,11 +272,30 @@ class MainActivity : AppCompatActivity()
             resultMessageView.text = getString(R.string.lose_game_message)
         }
 
-        //promptNewGame()
+        // New Game Button
+        val newGameButton = findViewById<Button>(R.id.new_game_button)
+        newGameButton.setOnClickListener(this::onNewGameButtonClick)
     }
 
-    private fun promptNewGame(){
+    private fun onNewGameButtonClick(view: View) {
+        Log.d("NewGame", "onNewGameButtonClick")
+        val gameResultLayout = findViewById<LinearLayout>(R.id.game_result_layout)
+        gameResultLayout.isVisible = false
 
+        val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
+        gridLayout.isVisible = true
+
+        // reset game vars
+        winCon = ""
+        scoreTarget = 50
+        movesLeft = 10
+        score = 0
+        didUserWin = false
+        isGameOver = false
+
+        // TODO: on new game, board slides down a little but after creation. not sure why.
+        createBoard()
+        startLoop()
     }
 
     // *************** SCORE CHECKING ***************
