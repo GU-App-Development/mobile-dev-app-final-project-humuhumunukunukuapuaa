@@ -1,19 +1,18 @@
 package com.zybooks.reeftriggerfish
 
-import android.app.ActionBar.LayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
 import com.zybooks.reeftriggerfish.uitel.OnSwipeListener
-import java.util.Arrays.asList
 import kotlin.math.abs
 import kotlin.math.floor
+
+private const val LIFE_CYCLE = "LifeCycle"
 
 class MainActivity : AppCompatActivity()
 {
@@ -36,6 +35,8 @@ class MainActivity : AppCompatActivity()
     private var isGameOver : Boolean = false
     private var didUserWin : Boolean = false
 
+    private var gameState: String = ""
+
     private var emptyCell : Int = R.drawable.transparent
     private var cellImages = intArrayOf(
         R.drawable.bluecandy,
@@ -54,28 +55,34 @@ class MainActivity : AppCompatActivity()
     // *************** OBJECT AND BOARD CREATION ***************
     override fun onCreate(savedInstanceState: Bundle?)
     {
-
-        /*
-            KT
-            TODO: 1. save instance on rotate.
-            TODO: 2. Add moves left & score target
-            TODO: 3. Check if swipe is a valid move.
-            TODO: 4. gameboard sinks a bit on new game.
-         */
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.d(LIFE_CYCLE, "onCreate")
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenWidth = displayMetrics.widthPixels
         screenHeight = displayMetrics.heightPixels
 
-
-
         cellWidth = screenWidth / numCells
         cell = ArrayList()
-        createBoard()
+
+        if (savedInstanceState != null) {
+            Log.d(LIFE_CYCLE, "loading existing instance...")
+            gameState = savedInstanceState.getString("gameState")!!
+            movesLeft = savedInstanceState.getInt("movesLeft")
+            score = savedInstanceState.getInt("score")
+
+            scoreTarget = 50
+            totalMoves = 10
+            createBoard(gameState)
+        } else {
+            scoreTarget = 50
+            movesLeft = 10
+            totalMoves = 10
+            score = 0
+            createBoard()
+        }
 
         // TODO: ADD CHECKS FOR VALID SWAPS
         for (imageView in cell){
@@ -109,9 +116,6 @@ class MainActivity : AppCompatActivity()
 
         // TODO: Manipulate 'winCon' to adjust game for various win conditions
         winCon = ""
-        scoreTarget = 50
-        movesLeft = 10
-        totalMoves = movesLeft
 
         // Display Values (Score, Target Score, Moves Left)
         scoreResult = findViewById(R.id.score_view)
@@ -127,24 +131,53 @@ class MainActivity : AppCompatActivity()
         startLoop()
     }
 
-    private fun createBoard(){
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(LIFE_CYCLE, "saving instance...")
+
+        // stringify gameboard
+        var boardString = StringBuilder()
+        for(i in 0 until numCells * numCells) {
+            val value = when(cell[i].tag as Int) {
+                R.drawable.bluecandy -> 0
+                R.drawable.greencandy -> 1
+                R.drawable.orangecandy -> 2
+                R.drawable.redcandy -> 3
+                R.drawable.yellowcandy -> 4
+                R.drawable.purplecandy -> 5
+                else -> R.drawable.transparent
+            }
+            boardString.append(value.toString())
+        }
+
+        outState.putString("gameState", boardString.toString())
+        outState.putInt("movesLeft", movesLeft)
+        outState.putInt("score", score)
+    }
+
+    private fun createBoard(gameState: String = ""){
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
         gridLayout.rowCount = numCells
         gridLayout.columnCount = numCells
         gridLayout.layoutParams.width = screenWidth
         gridLayout.layoutParams.height = screenHeight
 
-        for(i in 0 until numCells * numCells){
+        for (i in 0 until numCells * numCells) {
             val imageView = ImageView(this)
             imageView.id = i
             imageView.layoutParams = android.view.ViewGroup.LayoutParams(cellWidth, cellWidth)
             imageView.maxHeight = cellWidth
             imageView.maxWidth = cellWidth
 
-            val random : Int = floor(Math.random() * cellImages.size).toInt()
-
-            imageView.setImageResource(cellImages[random])
-            imageView.tag = cellImages[random]
+            if (gameState.isNotEmpty()) {
+                imageView.setImageResource(cellImages[gameState[i].digitToInt()])
+                imageView.tag = cellImages[gameState[i].digitToInt()]
+            }
+            else {
+                val random : Int = floor(Math.random() * cellImages.size).toInt()
+                imageView.setImageResource(cellImages[random])
+                imageView.tag = cellImages[random]
+            }
 
             cell.add(imageView)
             gridLayout.addView(imageView)
@@ -209,7 +242,7 @@ class MainActivity : AppCompatActivity()
 
     // FIXME: I think this implementation is buggy
     private fun moveDownCells(){
-        val firstRow = arrayOf(1,2,3,4,5,6,7,8)
+        val firstRow = arrayOf(0,1,2,3,4,5,6,7)
         val list = listOf(*firstRow)
         for (i in 55 downTo 0){
             if (cell[i + numCells].tag as Int == emptyCell){
@@ -365,7 +398,7 @@ class MainActivity : AppCompatActivity()
             val chosenCandy = cell[i].tag
             val isBlank : Boolean = cell[i].tag == emptyCell
             // don't check last 2 columns
-            val notValid = arrayOf(6,7,14,15,22,23,30,31,38,39,46,47,54,55)
+            val notValid = arrayOf(6,7,14,15,22,23,30,31,38,39,46,47,54,55,62,63)
             val list = listOf(*notValid)
 
             if(!list.contains(i)){
@@ -416,7 +449,6 @@ class MainActivity : AppCompatActivity()
                     && cell[i + 2].tag as Int == chosenCandy
                     && cell[i + 3].tag as Int == chosenCandy
                 ){
-//                    Log.d("inCheckForFour", "rowOf4Exists")
                     // if checking for valid return true
                     if (check) {
                         return true
@@ -621,6 +653,24 @@ class MainActivity : AppCompatActivity()
 
     }
 
+    // LIFE CYCLE
+    override fun onStop() {
+        super.onStop()
+        Log.d(LIFE_CYCLE, "onStop")
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(LIFE_CYCLE, "onDestroy")
+    }
 
+    override fun onPause() {
+        super.onPause()
+        Log.d(LIFE_CYCLE, "onPause")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(LIFE_CYCLE, "onResume")
+    }
 }
