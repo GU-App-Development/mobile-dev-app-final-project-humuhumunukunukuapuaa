@@ -1,5 +1,6 @@
 package com.zybooks.reeftriggerfish
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -21,13 +22,13 @@ class MainActivity : AppCompatActivity()
     private lateinit var scoreTargetView: TextView
     private lateinit var movesLeftView: TextView
     private lateinit var mouseHandler: Handler
+    private lateinit var music : MediaPlayer
 
     private var cellWidth : Int = 0
     private var screenWidth : Int = 0
     private var screenHeight : Int = 0
     private var score : Int = 0
 
-    //TODO: Edit game view to display winCon criteria
     private var scoreTarget : Int = 0
     private var movesLeft : Int = 0
     private var totalMoves: Int = 0
@@ -128,6 +129,11 @@ class MainActivity : AppCompatActivity()
         movesLeftView.text = getString(R.string.moves_left, movesLeft)
 
         mouseHandler = Handler()
+
+        // DEBUG: Trying to add background music
+        music = MediaPlayer.create(this, R.raw.stolen_music)
+        music.start()
+
         startLoop()
     }
 
@@ -135,8 +141,8 @@ class MainActivity : AppCompatActivity()
         super.onSaveInstanceState(outState)
         Log.d(LIFE_CYCLE, "saving instance...")
 
-        // stringify gameboard
-        var boardString = StringBuilder()
+        // stringify game-board
+        val boardString = StringBuilder()
         for(i in 0 until numCells * numCells) {
             val value = when(cell[i].tag as Int) {
                 R.drawable.bluecandy -> 0
@@ -228,7 +234,7 @@ class MainActivity : AppCompatActivity()
         cell[cellToBeReplaced].tag = background2
 
         if (!checkValidMove(cellToBeDragged, cellToBeReplaced)) {
-            // unswap if not valid move
+            // un-swap if not valid move
             cell[cellToBeDragged].tag = background2
             cell[cellToBeDragged].setImageResource(background2)
             cell[cellToBeReplaced].tag = background1
@@ -240,7 +246,7 @@ class MainActivity : AppCompatActivity()
         }
     }
 
-    // FIXME: I think this implementation is buggy
+
     private fun moveDownCells(){
         val firstRow = arrayOf(0,1,2,3,4,5,6,7)
         val list = listOf(*firstRow)
@@ -343,7 +349,7 @@ class MainActivity : AppCompatActivity()
         val resultMessageView = findViewById<TextView>(R.id.result_message_view)
 
         // Display feedback to user
-        // TODO: make end screen look nicer :)
+        // TODO: make end screen look nicer :^)
         if(didUserWin){
             resultMessageView.text = getString(R.string.win_game_message)
         } else {
@@ -373,8 +379,13 @@ class MainActivity : AppCompatActivity()
 
         // update display values
         scoreResult.text = getString(R.string.score_display, score)
-//        scoreTargetView.text = getString(R.string.score_target, scoreTarget)
+        // scoreTargetView.text = getString(R.string.score_target, scoreTarget)
         movesLeftView.text = getString(R.string.moves_left, movesLeft)
+
+        // DEBUG: new code to handle music
+        music.stop()
+        music = MediaPlayer.create(this, R.raw.stolen_music)
+        music.start()
 
         resetBoard()
         startLoop()

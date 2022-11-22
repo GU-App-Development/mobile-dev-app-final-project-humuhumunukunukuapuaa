@@ -17,6 +17,6 @@ Download the game. Should run in Android Studio without any configurations.
 If you have Android Studio, have the files installed, and have the project open, just Run the project.
 If you still need help, don't contact us :^)
 
-# Maintanence by: 
+# Maintenance by: 
 Dominic Bevilacqua
 Katie Stevens
