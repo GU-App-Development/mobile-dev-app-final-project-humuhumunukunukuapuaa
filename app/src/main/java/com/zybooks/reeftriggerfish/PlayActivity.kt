@@ -5,9 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 
+private var difficulty = "normal"
+
 class PlayActivity : AppCompatActivity() {
 
-    private lateinit var playButton : ImageView
+    private lateinit var playButtonEasy : ImageView
+    private lateinit var playButtonNormal : ImageView
+    private lateinit var playButtonHard : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,11 +19,28 @@ class PlayActivity : AppCompatActivity() {
 
         val action = supportActionBar
         action?.hide()
-        playButton = findViewById(R.id.playBtn)
-        playButton.setOnClickListener {
+        playButtonEasy = findViewById(R.id.playBtnEasy)
+        playButtonNormal = findViewById(R.id.playBtnNormal)
+        playButtonHard = findViewById(R.id.playBtnHard)
+
+        playButtonEasy.setOnClickListener {
             startActivity(Intent(
                 this@PlayActivity,
                 MainActivity::class.java))
         }
+        playButtonNormal.setOnClickListener {
+            startActivity(Intent(
+                this@PlayActivity,
+                MainActivity::class.java))
+        }
+        playButtonHard.setOnClickListener {
+            startActivity(Intent(
+                this@PlayActivity,
+                MainActivity::class.java))
+        }
+    }
+
+    fun checkDifficulty() : String {
+        return difficulty
     }
 }

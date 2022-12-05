@@ -118,6 +118,7 @@ class MainActivity : AppCompatActivity()
         // TODO: Manipulate 'winCon' to adjust game for various win conditions
         winCon = ""
 
+
         // Display Values (Score, Target Score, Moves Left)
         scoreResult = findViewById(R.id.score_view)
         scoreResult.text = getString(R.string.score_display, score)
@@ -380,6 +381,7 @@ class MainActivity : AppCompatActivity()
         // update display values
         scoreResult.text = getString(R.string.score_display, score)
         // scoreTargetView.text = getString(R.string.score_target, scoreTarget)
+
         movesLeftView.text = getString(R.string.moves_left, movesLeft)
 
         // DEBUG: new code to handle music

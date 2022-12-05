@@ -10,11 +10,28 @@
     android:layout_gravity="center"
     android:background="@drawable/main_page"
     tools:context=".PlayActivity">
+
     <ImageView
-        android:id="@+id/playBtn"
+        android:id="@+id/playBtnEasy"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/playbtn"
+        android:layout_marginTop="350dp"
+        android:src="@drawable/playbtneasy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/playBtnNormal"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/playbtnnormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/playBtnHard"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/playbtnhard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
