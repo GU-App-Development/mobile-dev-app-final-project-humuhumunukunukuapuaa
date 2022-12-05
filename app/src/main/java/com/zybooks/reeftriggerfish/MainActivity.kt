@@ -1,5 +1,6 @@
 package com.zybooks.reeftriggerfish
 
+import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -68,19 +69,19 @@ class MainActivity : AppCompatActivity()
         cellWidth = screenWidth / numCells
         cell = ArrayList()
 
+
+
         if (savedInstanceState != null) {
             Log.d(LIFE_CYCLE, "loading existing instance...")
             gameState = savedInstanceState.getString("gameState")!!
             movesLeft = savedInstanceState.getInt("movesLeft")
             score = savedInstanceState.getInt("score")
-
-            scoreTarget = 50
-            totalMoves = 10
+            scoreTarget = savedInstanceState.getInt("scoreTarget")
+            totalMoves = savedInstanceState.getInt("totalMoves")
             createBoard(gameState)
         } else {
-            scoreTarget = 50
-            movesLeft = 10
-            totalMoves = 10
+            getGameMode()
+            movesLeft = totalMoves
             score = 0
             createBoard()
         }
@@ -160,6 +161,8 @@ class MainActivity : AppCompatActivity()
         outState.putString("gameState", boardString.toString())
         outState.putInt("movesLeft", movesLeft)
         outState.putInt("score", score)
+        outState.putInt("scoreTarget", scoreTarget)
+        outState.putInt("totalMoves", totalMoves)
     }
 
     private fun createBoard(gameState: String = ""){
@@ -188,6 +191,19 @@ class MainActivity : AppCompatActivity()
 
             cell.add(imageView)
             gridLayout.addView(imageView)
+        }
+    }
+
+    private fun getGameMode() {
+        val intent = getIntent().getExtras()
+        val gameMode = intent?.getInt(SET_DIFFICULTY)
+        when (gameMode) {
+            0 -> {scoreTarget = 45 // EASY
+                  totalMoves = 15}
+            1 -> {scoreTarget = 50 // NORMAL
+                totalMoves = 10}
+            2 -> {scoreTarget = 60 // HARD
+                totalMoves = 7}
         }
     }
 

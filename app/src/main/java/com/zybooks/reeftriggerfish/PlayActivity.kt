@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.widget.ImageView
 
 private var difficulty = "normal"
+const val SET_DIFFICULTY = "SET_DIFFICULTY"
+private const val EASY = 0
+private const val NORMAL = 1
+private const val HARD = 2
 
 class PlayActivity : AppCompatActivity() {
 
@@ -24,19 +28,25 @@ class PlayActivity : AppCompatActivity() {
         playButtonHard = findViewById(R.id.playBtnHard)
 
         playButtonEasy.setOnClickListener {
-            startActivity(Intent(
+            val intent = Intent(
                 this@PlayActivity,
-                MainActivity::class.java))
+                MainActivity::class.java)
+            intent.putExtra(SET_DIFFICULTY, EASY)
+            startActivity(intent)
         }
         playButtonNormal.setOnClickListener {
-            startActivity(Intent(
+            val intent = Intent(
                 this@PlayActivity,
-                MainActivity::class.java))
+                MainActivity::class.java)
+            intent.putExtra(SET_DIFFICULTY, NORMAL)
+            startActivity(intent)
         }
         playButtonHard.setOnClickListener {
-            startActivity(Intent(
+            val intent = Intent(
                 this@PlayActivity,
-                MainActivity::class.java))
+                MainActivity::class.java)
+            intent.putExtra(SET_DIFFICULTY, HARD)
+            startActivity(intent)
         }
     }
 
