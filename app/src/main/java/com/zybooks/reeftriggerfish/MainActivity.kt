@@ -222,6 +222,7 @@ class MainActivity : AppCompatActivity()
                     checkColumnForFour()
                     checkRowForThree()
                     checkColumnForThree()
+                    checkBoardForSquarePattern()
 
                     moveDownCells()
                 } else {
@@ -419,7 +420,8 @@ class MainActivity : AppCompatActivity()
     private fun checkValidMove(cellToBeDragged: Int, cellToBeReplaced: Int): Boolean {
         val validMove = (checkRowForFive(true) || checkColumnForFive(true) ||
                 checkRowForFour(true) ||checkColumnForFour(true) ||
-                checkRowForThree(true) || checkColumnForThree(true))
+                checkRowForThree(true) || checkColumnForThree(true) ||
+                checkBoardForSquarePattern(true))
 
         Log.d("isValidMove", validMove.toString())
 
@@ -682,9 +684,56 @@ class MainActivity : AppCompatActivity()
         return false
     }
 
+
+
     // SPECIAL PATTERNS
     private fun checkBoardForPlusPattern(){
 
+    }
+
+    private fun checkBoardForSquarePattern (check: Boolean = false): Boolean {
+        for( i in 0..61){
+            val chosenCandy = cell[i].tag
+            val isBlank : Boolean = cell[i].tag == emptyCell
+            // don't check last columns & bottom row
+            val notValid = arrayOf(7,15,23,31,39,47,55,56,57,58,59,60,61,62,63)
+            val list = listOf(*notValid)
+
+            if(!list.contains(i)){
+
+                if(cell[i].tag as Int == chosenCandy
+                    && !isBlank
+                    && cell[i + 1].tag as Int == chosenCandy
+                    && cell[i + numCells].tag as Int == chosenCandy
+                    && cell[i + numCells + 1].tag as Int == chosenCandy
+                ){
+                    // if checking for valid return true
+                    if (check) {
+                        return true
+                    }
+                    // update score
+                    if (movesLeft < totalMoves) {
+                        score += 4
+                        scoreResult.text = getString(R.string.score_display, score)
+                    }
+
+                    // remove cells
+                    cell[i].setImageResource(emptyCell)
+                    cell[i].tag = emptyCell
+
+                    cell[i + 1].setImageResource(emptyCell)
+                    cell[i + 1].tag = emptyCell
+
+                    cell[i + numCells].setImageResource(emptyCell)
+                    cell[i + numCells].tag = emptyCell
+
+                    cell[i + numCells + 1].setImageResource(emptyCell)
+                    cell[i + numCells + 1].tag = emptyCell
+                    moveDownCells()
+                }
+            }
+        }
+        return false
     }
 
     // LIFE CYCLE
