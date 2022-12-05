@@ -386,27 +386,32 @@ class MainActivity : AppCompatActivity()
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
         gridLayout.isVisible = true
 
-        // reset game vars
-        winCon = ""
-        scoreTarget = 50
-        movesLeft = 10
-        score = 0
-        didUserWin = false
-        isGameOver = false
+        // Direct back to main screen
+        startActivity(Intent(
+            this@MainActivity,
+            PlayActivity::class.java))
 
-        // update display values
-        scoreResult.text = getString(R.string.score_display, score)
-        // scoreTargetView.text = getString(R.string.score_target, scoreTarget)
-
-        movesLeftView.text = getString(R.string.moves_left, movesLeft)
-
-        // DEBUG: new code to handle music
+//        // reset game vars
+//        winCon = ""
+//        scoreTarget = 50
+//        movesLeft = 10
+//        score = 0
+//        didUserWin = false
+//        isGameOver = false
+//
+//        // update display values
+//        scoreResult.text = getString(R.string.score_display, score)
+//        // scoreTargetView.text = getString(R.string.score_target, scoreTarget)
+//
+//        movesLeftView.text = getString(R.string.moves_left, movesLeft)
+//
+//        // DEBUG: new code to handle music
         music.stop()
-        music = MediaPlayer.create(this, R.raw.stolen_music)
-        music.start()
-
-        resetBoard()
-        startLoop()
+//        music = MediaPlayer.create(this, R.raw.stolen_music)
+//        music.start()
+//
+//        resetBoard()
+//        startLoop()
     }
 
     // *************** SCORE CHECKING ***************
