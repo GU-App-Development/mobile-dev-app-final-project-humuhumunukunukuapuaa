@@ -24,20 +24,25 @@ class MainActivity : AppCompatActivity()
     private lateinit var movesLeftView: TextView
     private lateinit var mouseHandler: Handler
     private lateinit var music : MediaPlayer
+    private lateinit var winCheer : MediaPlayer
+    private lateinit var loseBoo : MediaPlayer
+    private lateinit var matchSFX : MediaPlayer
 
+    var numCells : Int = 8
+    var cellToBeDragged : Int = 0
+    var cellToBeReplaced : Int = 0
     private var cellWidth : Int = 0
     private var screenWidth : Int = 0
     private var screenHeight : Int = 0
     private var score : Int = 0
-
     private var scoreTarget : Int = 0
     private var movesLeft : Int = 0
     private var totalMoves: Int = 0
     private var winCon : String = ""
+    private var gameState: String = ""
     private var isGameOver : Boolean = false
     private var didUserWin : Boolean = false
-
-    private var gameState: String = ""
+    var interval = 200L
 
     private var emptyCell : Int = R.drawable.transparent
     private var cellImages = intArrayOf(
@@ -49,12 +54,7 @@ class MainActivity : AppCompatActivity()
         R.drawable.purplecandy
     )
 
-    var interval = 200L
-    var numCells : Int = 8
-    var cellToBeDragged : Int = 0
-    var cellToBeReplaced : Int = 0
 
-    // *************** OBJECT AND BOARD CREATION ***************
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -68,8 +68,6 @@ class MainActivity : AppCompatActivity()
 
         cellWidth = screenWidth / numCells
         cell = ArrayList()
-
-
 
         if (savedInstanceState != null) {
             Log.d(LIFE_CYCLE, "loading existing instance...")
@@ -86,7 +84,6 @@ class MainActivity : AppCompatActivity()
             createBoard()
         }
 
-        // TODO: ADD CHECKS FOR VALID SWAPS
         for (imageView in cell){
             imageView.setOnTouchListener(object : OnSwipeListener(this){
                 override fun onSwipeRight() {
@@ -116,10 +113,6 @@ class MainActivity : AppCompatActivity()
             })
         }
 
-        // TODO: Manipulate 'winCon' to adjust game for various win conditions
-        winCon = ""
-
-
         // Display Values (Score, Target Score, Moves Left)
         scoreResult = findViewById(R.id.score_view)
         scoreResult.text = getString(R.string.score_display, score)
@@ -132,12 +125,21 @@ class MainActivity : AppCompatActivity()
 
         mouseHandler = Handler()
 
-        // DEBUG: Trying to add background music
+        // load and start background music
         music = MediaPlayer.create(this, R.raw.stolen_music)
+        music.setVolume(70.0f, 100.0f)
         music.start()
+
+        // load SFX for when matches are made
+        matchSFX = MediaPlayer.create(this, R.raw.ploing)
+
+        // load SFX for when game ends
+        winCheer = MediaPlayer.create(this, R.raw.cheer)
+        loseBoo = MediaPlayer.create(this, R.raw.boooo)
 
         startLoop()
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -164,6 +166,7 @@ class MainActivity : AppCompatActivity()
         outState.putInt("scoreTarget", scoreTarget)
         outState.putInt("totalMoves", totalMoves)
     }
+
 
     private fun createBoard(gameState: String = ""){
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
@@ -194,10 +197,15 @@ class MainActivity : AppCompatActivity()
         }
     }
 
+
+    /*
+        **********  CORE GAME FUNCTIONS  **********
+    */
+
+
     private fun getGameMode() {
-        val intent = getIntent().getExtras()
-        val gameMode = intent?.getInt(SET_DIFFICULTY)
-        when (gameMode) {
+        val intent = intent.extras
+        when (intent?.getInt(SET_DIFFICULTY)) {
             0 -> {scoreTarget = 45 // EASY
                   totalMoves = 15}
             1 -> {scoreTarget = 50 // NORMAL
@@ -207,14 +215,13 @@ class MainActivity : AppCompatActivity()
         }
     }
 
-    // *************** CORE GAME FUNCTIONS ***************
+    private fun startLoop(){loopChecker.run()}
     private val loopChecker : Runnable = object : Runnable {
         override fun run() {
             try {
                 if(!isGameOver){
-                    checkIfGameOver()
-
                     //checkBoardForPlusPattern()
+                    checkBoardForSquarePattern()
 
                     checkRowForFive()
                     checkColumnForFive()
@@ -222,9 +229,9 @@ class MainActivity : AppCompatActivity()
                     checkColumnForFour()
                     checkRowForThree()
                     checkColumnForThree()
-                    checkBoardForSquarePattern()
 
                     moveDownCells()
+                    checkIfGameOver()
                 } else {
                     clearBoard()
                     showGameResult()
@@ -235,8 +242,6 @@ class MainActivity : AppCompatActivity()
             }
         }
     }
-
-    private fun startLoop(){loopChecker.run()}
 
     fun swapCells(){
         Log.d("cell1:", cellToBeDragged.toString())
@@ -263,7 +268,6 @@ class MainActivity : AppCompatActivity()
             movesLeftView.text = getString(R.string.moves_left, movesLeft)
         }
     }
-
 
     private fun moveDownCells(){
         val firstRow = arrayOf(0,1,2,3,4,5,6,7)
@@ -316,8 +320,6 @@ class MainActivity : AppCompatActivity()
                 }
             }
             else -> {
-                // Possible change: let game continue until user says they want to be done?
-
                 // Currently combines score and moves (i.e. "get score >= 40 in 15 or less moves")
                 if(score >= scoreTarget && movesLeft >= 0){
                     didUserWin = true
@@ -345,33 +347,24 @@ class MainActivity : AppCompatActivity()
         }
     }
 
-    private fun resetBoard() {
-        clearBoard()
-
-        for(i in 0 until numCells * numCells){
-            if(cell[i].tag as Int == emptyCell){
-                val randomColor : Int = abs(Math.random() * cellImages.size).toInt()
-                cell[i].setImageResource(cellImages[randomColor])
-                cell[i].tag = cellImages[randomColor]
-            }
-        }
-    }
-
     private fun showGameResult() {
+
         // hide game board
         val gridLayout = findViewById<GridLayout>(R.id.gameBoard)
         gridLayout.isVisible = false
 
+        // Reveal game-end screen
         val gameResultLayout = findViewById<LinearLayout>(R.id.game_result_layout)
-        gameResultLayout.isVisible = true
         val resultMessageView = findViewById<TextView>(R.id.result_message_view)
+        gameResultLayout.isVisible = true
 
         // Display feedback to user
-        // TODO: make end screen look nicer :^)
         if(didUserWin){
             resultMessageView.text = getString(R.string.win_game_message)
+            winCheer.start()
         } else {
             resultMessageView.text = getString(R.string.lose_game_message)
+            loseBoo.start()
         }
 
         // New Game Button
@@ -392,30 +385,14 @@ class MainActivity : AppCompatActivity()
             this@MainActivity,
             PlayActivity::class.java))
 
-//        // reset game vars
-//        winCon = ""
-//        scoreTarget = 50
-//        movesLeft = 10
-//        score = 0
-//        didUserWin = false
-//        isGameOver = false
-//
-//        // update display values
-//        scoreResult.text = getString(R.string.score_display, score)
-//        // scoreTargetView.text = getString(R.string.score_target, scoreTarget)
-//
-//        movesLeftView.text = getString(R.string.moves_left, movesLeft)
-//
-//        // DEBUG: new code to handle music
         music.stop()
-//        music = MediaPlayer.create(this, R.raw.stolen_music)
-//        music.start()
-//
-//        resetBoard()
-//        startLoop()
+        winCheer.stop()
+        loseBoo.stop()
     }
 
-    // *************** SCORE CHECKING ***************
+    /*
+        **********  PATTERN CHECKING  **********
+    */
 
     private fun checkValidMove(cellToBeDragged: Int, cellToBeReplaced: Int): Boolean {
         val validMove = (checkRowForFive(true) || checkColumnForFive(true) ||
@@ -425,10 +402,14 @@ class MainActivity : AppCompatActivity()
 
         Log.d("isValidMove", validMove.toString())
 
+        if(validMove)
+            matchSFX.start()
+
         return validMove
     }
 
-    //  ROWS
+        //  ROWS
+
     private fun checkRowForThree(check: Boolean = false): Boolean {
         for( i in 0..61){
             val chosenCandy = cell[i].tag
@@ -564,7 +545,8 @@ class MainActivity : AppCompatActivity()
         return false
     }
 
-    // COLUMNS
+        //  COLUMNS
+
     private fun checkColumnForThree(check: Boolean = false): Boolean {
         for( i in 0..47){
             val chosenCandy = cell[i].tag
@@ -685,8 +667,8 @@ class MainActivity : AppCompatActivity()
     }
 
 
+        //  SPECIAL PATTERNS
 
-    // SPECIAL PATTERNS
     private fun checkBoardForPlusPattern(){
 
     }
@@ -729,6 +711,7 @@ class MainActivity : AppCompatActivity()
 
                     cell[i + numCells + 1].setImageResource(emptyCell)
                     cell[i + numCells + 1].tag = emptyCell
+
                     moveDownCells()
                 }
             }
@@ -736,7 +719,12 @@ class MainActivity : AppCompatActivity()
         return false
     }
 
-    // LIFE CYCLE
+
+    /*
+        **********  LIFE CYCLE  **********
+    */
+
+
     override fun onStop() {
         super.onStop()
         Log.d(LIFE_CYCLE, "onStop")

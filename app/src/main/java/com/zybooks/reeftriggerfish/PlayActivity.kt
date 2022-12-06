@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 
-private var difficulty = "normal"
 const val SET_DIFFICULTY = "SET_DIFFICULTY"
 private const val EASY = 0
 private const val NORMAL = 1
@@ -48,9 +47,5 @@ class PlayActivity : AppCompatActivity() {
             intent.putExtra(SET_DIFFICULTY, HARD)
             startActivity(intent)
         }
-    }
-
-    fun checkDifficulty() : String {
-        return difficulty
     }
 }

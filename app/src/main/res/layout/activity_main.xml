@@ -74,19 +74,23 @@
             android:layout_height="wrap_content"
             android:visibility="gone">
 
-        <TextView
-            android:id="@+id/result_message_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold|normal"
-            android:textColor="@color/white"
-            android:textSize="28sp" />
+            <TextView
+                android:id="@+id/result_message_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold|normal"
+                android:textColor="@color/white"
+                android:textSize="40sp"/>
 
-        <Button
-            android:id="@+id/new_game_button"
-            android:text="@string/new_game_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            <Button
+                android:id="@+id/new_game_button"
+                android:text="@string/new_game_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"/>
     </LinearLayout>
 </LinearLayout>

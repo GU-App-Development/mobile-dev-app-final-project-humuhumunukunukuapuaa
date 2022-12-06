@@ -2,9 +2,9 @@
 
 # Team Name: 
 Humuhumunukunukuapua'a
+
 # Team Members: 
-Dominic Bevilacqua
-Katie Stevens
+Dominic Bevilacqua, Katie Stevens
 
 
 # Abstract (what the project does & how it is useful):
@@ -22,5 +22,4 @@ If you have Android Studio, have the files installed, and have the project open,
 If you still need help, don't contact us :^)
 
 # Maintenance by: 
-Dominic Bevilacqua
-Katie Stevens
+Dominic Bevilacqua, Katie Stevens
