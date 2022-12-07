@@ -19,6 +19,7 @@ You should be able to build and run the app on the emulated device.
 
 # Need Help?
 If you have Android Studio, have the files installed, and have the project open, just Run the project.
+If you get some kind of 'SDK Missing' error, try: File -> Sync Project With Gradle Files.
 If you still need help, don't contact us :^)
 
 # Maintenance by: 
